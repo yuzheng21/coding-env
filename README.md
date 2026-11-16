@@ -53,6 +53,7 @@ The iTerm2 export leaves out window positions, update and analytics bookkeeping,
 ## Layout
 
 ```
+CLAUDE.md                notes for Claude Code (rules, sync model, how to test)
 bootstrap.sh             fresh-Mac one-liner: Homebrew + clone + install.sh
 install.sh / export.sh   set up a Mac / capture this Mac into the repo
 scripts/common.sh        shared paths + list of symlinked files
