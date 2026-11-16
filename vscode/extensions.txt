@@ -1,0 +1,16 @@
+catppuccin.catppuccin-vsc
+dracula-theme.theme-dracula
+kevinrose.vsc-python-indent
+ms-python.debugpy
+ms-python.python
+ms-python.vscode-pylance
+ms-python.vscode-python-envs
+pdconsec.vscode-print
+redhat.java
+vscjava.vscode-gradle
+vscjava.vscode-java-debug
+vscjava.vscode-java-dependency
+vscjava.vscode-java-pack
+vscjava.vscode-java-test
+vscjava.vscode-maven
+vscodevim.vim

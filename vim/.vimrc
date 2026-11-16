@@ -1,96 +1,73 @@
-" Vundle Section Begin
-set nocompatible    " be iMproved, required
-filetype off        " required
+set nocompatible
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+" vim-plug
+call plug#begin('~/.vim/plugged')
+Plug 'dracula/vim', { 'as': 'dracula' }
+call plug#end()
 
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+filetype plugin indent on
 
-" plugins
-Plugin 'moll/vim-node'
-Plugin 'fatih/vim-go'
-Plugin 'Shutnik/jshint2.vim'
-Plugin 'dracula/vim'
-
-
-" All of your plugins must be added before end
-call vundle#end()           " required
-filetype plugin indent on   " required
-
-" Vundle Section End
-
+" General
 set autoindent
 set smartindent
 set smarttab
+set hidden
+set wildmenu
+set scrolloff=5
+set noerrorbells
+set splitright
+set splitbelow
 
+" UI
 set number
 set ruler
 set laststatus=2
 set cursorline
 
-" set search
+" Search
 set ignorecase
+set smartcase
 set incsearch
 set hlsearch
 
-" set mouse
+" Mouse & clipboard
 set mouse=a
-
-" share system clipboard
 set clipboard=unnamed
 
-" set highlight
+" Syntax highlighting
 syntax on
 
-" set color themes
-" colorscheme molokai
-" set background=dark
-
-" disable italic, need to set before loading dracula color scheme
-" let g:dracula_italic = 0
+" Theme
 color dracula
-
-" set the background transparent
 hi Normal guibg=NONE ctermbg=NONE
 
-" set tab width
+" Indentation
 set tabstop=2
 set shiftwidth=2
 set expandtab
-
-" set text width
-" set textwidth=120
 set colorcolumn=120
-
-" make backspace work like most other apps
 set backspace=2
 
-" italic setting within tmux
+" Per-filetype indentation
+autocmd FileType python,go,java setlocal tabstop=4 shiftwidth=4
+
+" Map Shift-Tab to un-indent in insert mode
+inoremap <S-Tab> <C-d>
+
+" True color support
 let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
-set termguicolors
+if has('termguicolors')
+  set termguicolors
+endif
 
-autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab 
-autocmd FileType go setlocal tabstop=4 shiftwidth=4 expandtab
-autocmd FileType java setlocal tabstop=4 shiftwidth=4 expandtab
+" Key mappings
+nnoremap <leader>h :nohlsearch<CR>
+nnoremap ; :
 
-autocmd FileType html setlocal tabstop=2 shiftwidth=2 expandtab 
-autocmd FileType ruby setlocal tabstop=2 shiftwidth=2 expandtab
-autocmd FileType javascript setlocal tabstop=2 shiftwidth=2 expandtab
-autocmd FileType json setlocal tabstop=2 shiftwidth=2 expandtab
-
-" gradle syntax highlight
-au BufNewFile,BufRead *.gradle setf groovy
-
-" supertab
-" let g:SuperTabMappingForward = '<C-Tab>'
-
-" latex
+" LaTeX
 autocmd FileType tex setlocal makeprg=pdflatex\ --shell-escape\ '%'
 map <F5> :w<CR> :!pdflatex %<<CR>
 
-" Jshint inside vim
-map <F2> :JSHint<CR>
+" Gradle
+au BufNewFile,BufRead *.gradle setf groovy

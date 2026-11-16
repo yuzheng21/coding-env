@@ -1,0 +1,11 @@
+{
+    "vim.useSystemClipboard": true,
+    "editor.minimap.enabled": false,
+    "workbench.colorTheme": "Dracula Theme",
+    "editor.fontSize": 14,
+    "print.sourcecode.fontSize": "8pt",
+    "explorer.confirmDelete": false,
+    "editor.inlineSuggest.enabled": false,
+    "editor.inlineSuggest.showToolbar": "never",
+    "chat.viewSessions.orientation": "stacked"
+}
