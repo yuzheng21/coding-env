@@ -47,7 +47,7 @@ alias ssh='TERM=xterm-256color ssh'
 alias t='tmux'
 alias e='exit'
 alias vs='code'
-alias v='/usr/local/bin/vim'
+alias v='vim'
 alias cc='claude'
 alias python=python3
 
