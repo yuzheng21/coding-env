@@ -103,9 +103,20 @@ step_zsh() {
   info "Oh My Zsh"
   # Link .zshrc first so the Oh My Zsh installer (KEEP_ZSHRC) leaves it alone.
   link zsh/.zshrc "$HOME/.zshrc"
-  if [[ ! -d "$ZSH_DIR" ]]; then
-    RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
-      "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  if [[ ! -f "$ZSH_DIR/oh-my-zsh.sh" ]]; then
+    # A half-finished install (e.g. a plugin clone that ran after a failed
+    # download) leaves $ZSH_DIR behind, and the Oh My Zsh installer refuses
+    # to install into an existing folder. Move it aside.
+    if [[ -e "$ZSH_DIR" ]]; then
+      mkdir -p "$BACKUP_DIR"
+      mv "$ZSH_DIR" "$BACKUP_DIR/"
+      warn "moved incomplete $ZSH_DIR -> $BACKUP_DIR/"
+    fi
+    # Download first: inside "$(...)" as an argument, a curl failure is ignored by set -e.
+    local omz_installer
+    omz_installer="$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$omz_installer" "" --unattended
+    [[ -f "$ZSH_DIR/oh-my-zsh.sh" ]] || { warn "Oh My Zsh install failed; re-run ./install.sh zsh"; exit 1; }
   fi
   ok "$ZSH_DIR"
   clone_or_pull https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM_DIR/plugins/zsh-syntax-highlighting"
