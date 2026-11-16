@@ -12,6 +12,13 @@ In **Terminal.app** on the new Mac (nothing needs to be installed first):
 
 `bootstrap.sh` asks for your password once, installs Homebrew (which installs the Xcode Command Line Tools and git without the GUI dialog), clones this repo over HTTPS to `~/workspace/coding-env`, and runs `./install.sh`. You don't need an SSH key to clone. The push URL is set to SSH, so `git push` works once you've added a key to GitHub.
 
+When it finishes:
+
+1. Open iTerm2. It starts with the Dracula profile, zsh and Oh My Zsh.
+2. If a step failed (for example a cask download), fix it and re-run just that step: `cd ~/workspace/coding-env && ./install.sh brew`.
+3. For `git push`, create an SSH key (`ssh-keygen -t ed25519`) and add `~/.ssh/id_ed25519.pub` to GitHub.
+4. Things the script can't do: sign in to apps, and install Mac App Store apps (Magnet) and LarkSuite.
+
 Run `./install.sh` (and `bootstrap.sh`) from **Terminal.app**, not iTerm2. The iTerm2 step is skipped while iTerm2 is running, because iTerm2 would overwrite the imported preferences when it quits.
 
 Run only some steps with `./install.sh vim zsh`. The steps are:
