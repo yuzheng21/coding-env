@@ -4,21 +4,23 @@ My macOS dev setup: zsh, vim, tmux, iTerm2, VS Code.
 
 ## New Mac
 
+In **Terminal.app** on the new Mac (nothing needs to be installed first):
+
 ```sh
-xcode-select --install                      # gives you git; wait for it to finish
-git clone <this repo> ~/workspace/coding-env
-cd ~/workspace/coding-env
-./install.sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/yuzheng21/coding-env/master/bootstrap.sh)"
 ```
 
-Run `./install.sh` from **Terminal.app**, not iTerm2. The iTerm2 step is skipped while iTerm2 is running, because iTerm2 would overwrite the imported preferences when it quits.
+`bootstrap.sh` asks for your password once, installs Homebrew (which installs the Xcode Command Line Tools and git without the GUI dialog), clones this repo over HTTPS to `~/workspace/coding-env`, and runs `./install.sh`. You don't need an SSH key to clone. The push URL is set to SSH, so `git push` works once you've added a key to GitHub.
+
+Run `./install.sh` (and `bootstrap.sh`) from **Terminal.app**, not iTerm2. The iTerm2 step is skipped while iTerm2 is running, because iTerm2 would overwrite the imported preferences when it quits.
 
 Run only some steps with `./install.sh vim zsh`. The steps are:
 
 | step     | what it does |
 |----------|--------------|
-| `brew`   | Command Line Tools, Homebrew, everything in `Brewfile` (incl. iTerm2, VS Code, JDK 25, Go, Docker) |
+| `brew`   | Homebrew (+ Command Line Tools), everything in `Brewfile` (incl. iTerm2, VS Code, JDK 25, Go, Docker) |
 | `fonts`  | copies `font/*` to `~/Library/Fonts` |
+| `terminfo` | compiles `terminfo/*` into `~/.terminfo` (the iTerm2 profile uses `TERM=xterm-256color-italic`) |
 | `zsh`    | Oh My Zsh, zsh-syntax-highlighting, zsh-autosuggestions, Dracula theme, `.zshrc`; sets zsh as the login shell |
 | `vim`    | `.vimrc`, vim-plug, `:PlugInstall` |
 | `tmux`   | Oh my tmux! + `tmux.conf.local` |
@@ -44,6 +46,7 @@ The iTerm2 export leaves out window positions, update and analytics bookkeeping,
 ## Layout
 
 ```
+bootstrap.sh             fresh-Mac one-liner: Homebrew + clone + install.sh
 install.sh / export.sh   set up a Mac / capture this Mac into the repo
 scripts/common.sh        shared paths + list of symlinked files
 Brewfile                 Homebrew formulae & casks
@@ -53,7 +56,8 @@ tmux/                    tmux.conf.local for Oh my tmux!
 iterm/                   com.googlecode.iterm2.plist; colors/*.itermcolors
 vscode/                  settings.json, keybindings.json, extensions.txt
 font/                    Consolas, Inconsolata, DejaVu Sans Mono, Droid Sans Mono
-intellij/ terminfo/      older extras (not installed by the script)
+terminfo/                xterm-256color-italic, tmux-256color (italics)
+intellij/                older extras (not installed by the script)
 ```
 
 ## References

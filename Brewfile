@@ -1,5 +1,5 @@
 # Installed by ./install.sh via `brew bundle`.
-# ./export.sh reports anything installed on this mac that's missing here.
+# ./export.sh (run on a configured Mac) reports installed packages missing here.
 
 tap "openai/tools"
 
@@ -19,12 +19,12 @@ cask "visual-studio-code"
 cask "oracle-jdk@25"            # .zshrc sets JAVA_HOME to JDK 25
 cask "docker-desktop"           # .zshrc loads Docker completions
 
-# --- Other tools on the current mac ----------------------------------------
+# --- Other tools --------------------------------------------------------------
 cask "codex"
 cask "openai/tools/openai", trusted: true
 cask "mactex"                   # ~6 GB; comment out if you don't need LaTeX
 
-# --- Other apps on the current mac (uncomment the ones you want) -----------
+# --- Optional apps (uncomment the ones you want) ------------------------------
 # cask "alfred"
 # cask "betterdisplay"
 # cask "chatgpt"

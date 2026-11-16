@@ -4,13 +4,13 @@
 #   ./install.sh                 # everything
 #   ./install.sh vim zsh         # only some steps
 #
-# Steps: brew fonts zsh vim tmux iterm vscode claude
+# Steps: brew fonts terminfo zsh vim tmux iterm vscode claude
 #
 # Existing files that would be replaced are moved to ~/.dotfiles-backup/<timestamp>/.
 set -euo pipefail
 source "$(dirname "$0")/scripts/common.sh"
 
-ALL_STEPS=(brew fonts zsh vim tmux iterm vscode claude)
+ALL_STEPS=(brew fonts terminfo zsh vim tmux iterm vscode claude)
 BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 
 # Symlink $REPO_DIR/<repo_rel> to <dest>, backing up whatever is there.
@@ -44,6 +44,15 @@ clone_or_pull() {
   fi
 }
 
+# Ask for the password once and keep sudo's timestamp fresh while we run
+# (Homebrew's non-interactive installer and pkg-based casks need it).
+keep_sudo_alive() {
+  [[ -n "${_SUDO_KEEPALIVE:-}" ]] && return 0
+  sudo -v
+  while kill -0 "$$" 2>/dev/null; do sudo -n true; sleep 50; done 2>/dev/null &
+  _SUDO_KEEPALIVE=$!
+}
+
 brew_shellenv() {
   for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
     [[ -x "$b" ]] && { eval "$("$b" shellenv)"; return 0; }
@@ -54,23 +63,22 @@ brew_shellenv() {
 # --- steps ------------------------------------------------------------------
 
 step_brew() {
-  info "Xcode Command Line Tools"
-  if ! xcode-select -p >/dev/null 2>&1; then
-    xcode-select --install || true
-    warn "Finish the Command Line Tools installer, then re-run ./install.sh"
-    exit 1
-  fi
-  ok "installed"
-
-  info "Homebrew"
+  info "Homebrew (its installer also installs the Xcode Command Line Tools, incl. git)"
+  keep_sudo_alive
   if ! brew_shellenv; then
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     brew_shellenv
   fi
   ok "$(brew --version | head -1)"
+  if ! xcode-select -p >/dev/null 2>&1; then
+    warn "Xcode Command Line Tools missing: run 'xcode-select --install', then ./install.sh"
+    exit 1
+  fi
 
-  info "brew bundle (this can take a while)"
-  brew bundle --file="$REPO_DIR/Brewfile"
+  info "brew bundle (this can take a while; some casks ask for your password)"
+  # Don't let one failed download stop the dotfile steps that follow.
+  brew bundle --file="$REPO_DIR/Brewfile" ||
+    warn "some Brewfile entries failed; fix them and re-run ./install.sh brew"
 }
 
 step_fonts() {
@@ -78,6 +86,17 @@ step_fonts() {
   mkdir -p "$HOME/Library/Fonts"
   cp -n "$REPO_DIR"/font/*.{ttf,otf} "$HOME/Library/Fonts/" 2>/dev/null || true
   ok "copied font/* to ~/Library/Fonts"
+}
+
+step_terminfo() {
+  info "terminfo"
+  # The iTerm2 Dracula profile sets TERM=xterm-256color-italic, which macOS
+  # doesn't ship; without it vim/less/tput fail with "unknown terminal".
+  mkdir -p "$HOME/.terminfo"
+  for f in "$REPO_DIR"/terminfo/*.terminfo; do
+    tic -x -o "$HOME/.terminfo" "$f"
+    ok "$(basename "$f" .terminfo)"
+  done
 }
 
 step_zsh() {
@@ -128,6 +147,7 @@ step_iterm() {
   sed "s|__HOME__|$HOME|g" "$ITERM_PLIST" > "$tmp"
   defaults import "$ITERM_DOMAIN" "$tmp"
   rm -f "$tmp"
+  mkdir -p "$HOME/workspace"   # the Dracula profile opens new windows in ~/workspace
   ok "imported iterm/com.googlecode.iterm2.plist (Dracula profile is the default)"
 }
 
